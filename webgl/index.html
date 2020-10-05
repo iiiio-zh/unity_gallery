@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Unity WebGL Player | demo_project</title>
+  <link rel="shortcut icon" href="TemplateData/favicon.ico">
+  <link rel="stylesheet" href="TemplateData/style.css">
+  <style>
+    canvas#unity-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .unity-container {
+      display: block;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 110%;
+      height: 110%;
+      padding: 0px;
+      margin: 0px;
+      border: 0px;
+      background: rgba(255, 255, 255, 0);
+    }
+
+    .rotate-bg {
+      position: absolute;
+      left: 0px;
+      display: block;
+      background-color: black;
+      opacity: 80%;
+      width: 110%;
+      height: 110%;
+      padding: 0px;
+      margin: 0px;
+      border: 0px;
+    }
+
+    .rotate-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 50%;
+      height: auto;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+
+<body style="text-align: center; background-color: black; border: 0px; margin: 0px; overflow: hidden;">
+  <div class="unity-container" id="unity-container">
+    <canvas id="unity-canvas" style="background: #231F20;"></canvas>
+    <div id="unity-loading-bar">
+      <div id="unity-logo"></div>
+      <div id="unity-progress-bar-empty">
+        <div id="unity-progress-bar-full"></div>
+      </div>
+    </div>
+  </div>
+  <div class="rotate-bg" id="rotate-suggest" onclick="popup_hide()">
+    <img class="rotate-img" src="screen-rotate.png" draggable="false">
+  </div>
+  <script>
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/webgl.loader.js";
+    var config = {
+      dataUrl: buildUrl + "/webgl.data",
+      frameworkUrl: buildUrl + "/webgl.framework.js",
+      codeUrl: buildUrl + "/webgl.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "16-bit Production",
+      productName: "demo_project",
+      productVersion: "0.1",
+    };
+
+    var container = document.querySelector("#unity-container");
+    var canvas = document.querySelector("#unity-canvas");
+    var loadingBar = document.querySelector("#unity-loading-bar");
+    var progressBarFull = document.querySelector("#unity-progress-bar-full");
+
+    loadingBar.style.display = "block";
+
+    var script = document.createElement("script");
+    script.src = loaderUrl;
+    script.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        progressBarFull.style.width = 100 * progress + "%";
+      }).then((unityInstance) => {
+        loadingBar.style.display = "none";
+      }).catch((message) => {
+        alert(message);
+      });
+    };
+    document.body.appendChild(script);
+  </script>
+  <script>
+    getratio();
+    function getratio() {
+      var height = window.innerHeight;
+      var width = window.innerWidth;
+      var ratio = height / width;
+      if (ratio > 1.2) {
+        document.getElementById("unity-container").style.height = "auto";
+        document.getElementById("unity-container").style.width = "110%";
+        popup_show();
+      } else {
+        document.getElementById("unity-container").style.height = "110%";
+        document.getElementById("unity-container").style.width = "110%";
+        popup_hide();
+      }
+    }
+
+    function popup_hide() {
+      document.getElementById("rotate-suggest").style.display = "none";
+    }
+
+    function popup_show() {
+      document.getElementById("rotate-suggest").style.display = "block";
+    }
+
+    window.onresize = function (event) {
+      getratio();
+    }
+  </script>
+</body>
+
+</html>
